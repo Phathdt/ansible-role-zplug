@@ -1,0 +1,37 @@
+---
+# Install git and zsh
+- name: Ensure git and zsh are installed (Darwin).
+  homebrew:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - git
+    - zsh
+
+
+# Check if .zplug folder is exist.
+- name: "Check if .zplug folder exist."
+  stat: path={{zplug_zshrc_path}}
+  register: zplug_folder
+
+- name: Install zplug
+  command: "git clone https://github.com/b4b4r07/zplug {{zplug_zshrc_path}}"
+  when: zplug_folder.stat.exists == false
+
+- name: Change zplug folder owner
+  file:
+    path: "{{ zplug_zshrc_path }}"
+    state: directory
+    owner: "{{ zplug_user }}"
+    group: "{{ zplug_group }}"
+    recurse: yes
+
+- name: Create .zshrc file
+  template:
+    src: zplug_zshrc_content.j2
+    dest: "{{ zplug_zshrc_path }}"
+    owner: "{{ zplug_user }}"
+    group: "{{ zplug_group }}"
+
+- name: Change default shell
+  user: name={{ zplug_user }} shell=/usr/bin/zsh

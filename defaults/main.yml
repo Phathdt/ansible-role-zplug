@@ -1,0 +1,6 @@
+---
+zplug_user: shailendraverma
+zplug_zshrc_path: "/home/{{ zplug_user }}/.zplug"
+zplug_group: "{{ zplug_user }}"
+zplug_zshrc_content: |
+  zplug "plugins/git", from:oh-my-zsh, if:"which git"
